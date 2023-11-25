@@ -5,7 +5,8 @@
     "python@3.10",
     "poetry@latest",
     "python310Packages.ipykernel@latest",
-    "black@latest"
+    "black@latest",
+    "direnv@latest"
   ],
   "shell": {
     "init_hook": [
