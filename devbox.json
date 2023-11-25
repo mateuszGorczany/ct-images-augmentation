@@ -4,7 +4,8 @@
     "gnumake@latest",
     "python@3.10",
     "poetry@latest",
-    "python310Packages.ipykernel@latest"
+    "python310Packages.ipykernel@latest",
+    "black@latest"
   ],
   "shell": {
     "init_hook": [
