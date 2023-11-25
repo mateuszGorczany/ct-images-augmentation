@@ -1,5 +1,8 @@
-fix:
-	pre-commit
+env:
+	devbox shell
+
+download_data:
+	dvc pull
 
 update-env:
-	pip install -r requirements-dev.txt
+	poetry update
