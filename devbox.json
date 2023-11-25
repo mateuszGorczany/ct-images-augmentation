@@ -1,0 +1,19 @@
+{
+  "packages": [
+    "pre-commit@latest",
+    "gnumake@latest",
+    "python@3.10",
+    "poetry@latest",
+    "python310Packages.ipykernel@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "poetry shell"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
+    }
+  }
+}
