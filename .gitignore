@@ -1,3 +1,7 @@
+# My
+.aim/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -159,3 +163,21 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 .dvc/config
+outputs/2023-11-25/23-50-16/.hydra/config.yaml
+outputs/2023-11-25/23-50-16/.hydra/hydra.yaml
+outputs/2023-11-25/23-50-16/.hydra/overrides.yaml
+outputs/2023-11-25/23-50-45/.hydra/config.yaml
+outputs/2023-11-25/23-50-45/.hydra/hydra.yaml
+outputs/2023-11-25/23-50-45/.hydra/overrides.yaml
+outputs/2023-11-25/23-50-53/.hydra/config.yaml
+outputs/2023-11-25/23-50-53/.hydra/hydra.yaml
+outputs/2023-11-25/23-50-53/.hydra/overrides.yaml
+outputs/2023-11-25/23-51-07/.hydra/config.yaml
+outputs/2023-11-25/23-51-07/.hydra/hydra.yaml
+outputs/2023-11-25/23-51-07/.hydra/overrides.yaml
+outputs/2023-11-25/23-51-27/.hydra/config.yaml
+outputs/2023-11-25/23-51-27/.hydra/hydra.yaml
+outputs/2023-11-25/23-51-27/.hydra/overrides.yaml
+outputs/2023-11-25/23-52-08/.hydra/config.yaml
+outputs/2023-11-25/23-52-08/.hydra/hydra.yaml
+outputs/2023-11-25/23-52-08/.hydra/overrides.yaml

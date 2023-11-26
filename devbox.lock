@@ -1,32 +1,32 @@
 {
   "lockfile_version": "1",
   "packages": {
-    "black@latest": {
+    "black@23.9.1": {
       "last_modified": "2023-11-19T17:46:56Z",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#black",
       "source": "devbox-search",
       "version": "23.9.1"
     },
-    "gnumake@latest": {
-      "last_modified": "2023-11-02T13:29:18Z",
-      "resolved": "github:NixOS/nixpkgs/b644d97bda6dae837d577e28383c10aa51e5e2d2#gnumake",
+    "gnumake@4.4.1": {
+      "last_modified": "2023-11-19T17:46:56Z",
+      "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#gnumake",
       "source": "devbox-search",
       "version": "4.4.1"
     },
-    "poetry@latest": {
+    "poetry@1.6.1": {
       "last_modified": "2023-11-19T17:46:56Z",
       "plugin_version": "0.0.1",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#poetry",
       "source": "devbox-search",
       "version": "1.6.1"
     },
-    "pre-commit@latest": {
-      "last_modified": "2023-11-02T13:29:18Z",
-      "resolved": "github:NixOS/nixpkgs/b644d97bda6dae837d577e28383c10aa51e5e2d2#pre-commit",
+    "pre-commit@3.3.3": {
+      "last_modified": "2023-11-19T17:46:56Z",
+      "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#pre-commit",
       "source": "devbox-search",
       "version": "3.3.3"
     },
-    "python310Packages.ipykernel@latest": {
+    "python310Packages.ipykernel@6.25.2": {
       "last_modified": "2023-11-19T17:46:56Z",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#python310Packages.ipykernel",
       "source": "devbox-search",
@@ -38,6 +38,10 @@
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#python310",
       "source": "devbox-search",
       "version": "3.10.13"
+    },
+    "stdenv.cc.cc.lib": {
+      "resolved": "github:NixOS/nixpkgs/f80ac848e3d6f0c12c52758c0f25c10c97ca3b62#stdenv.cc.cc.lib",
+      "source": "nixpkg"
     }
   }
 }
