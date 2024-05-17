@@ -3,10 +3,11 @@
     "pre-commit@3.3.3",
     "gnumake@4.4.1",
     "python@3.10",
-    "poetry@1.6.1",
     "python310Packages.ipykernel@6.25.2",
     "black@23.9.1",
-    "stdenv.cc.cc.lib"
+    "stdenv.cc.cc.lib",
+    "rye@latest",
+    "uv@latest"
   ],
   "shell": {
     "init_hook": [

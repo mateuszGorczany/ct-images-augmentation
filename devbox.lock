@@ -13,13 +13,6 @@
       "source": "devbox-search",
       "version": "4.4.1"
     },
-    "poetry@1.6.1": {
-      "last_modified": "2023-11-19T17:46:56Z",
-      "plugin_version": "0.0.1",
-      "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#poetry",
-      "source": "devbox-search",
-      "version": "1.6.1"
-    },
     "pre-commit@3.3.3": {
       "last_modified": "2023-11-19T17:46:56Z",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#pre-commit",
@@ -39,9 +32,21 @@
       "source": "devbox-search",
       "version": "3.10.13"
     },
+    "rye@latest": {
+      "last_modified": "2024-04-19T21:36:04Z",
+      "resolved": "github:NixOS/nixpkgs/92d295f588631b0db2da509f381b4fb1e74173c5#rye",
+      "source": "devbox-search",
+      "version": "0.31.0"
+    },
     "stdenv.cc.cc.lib": {
       "resolved": "github:NixOS/nixpkgs/f80ac848e3d6f0c12c52758c0f25c10c97ca3b62#stdenv.cc.cc.lib",
       "source": "nixpkg"
+    },
+    "uv@latest": {
+      "last_modified": "2024-04-28T05:04:40Z",
+      "resolved": "github:NixOS/nixpkgs/9516f3c963708933abe984df94a925af38916237#uv",
+      "source": "devbox-search",
+      "version": "0.1.39"
     }
   }
 }
