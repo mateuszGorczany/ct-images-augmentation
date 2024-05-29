@@ -3,7 +3,6 @@
     "pre-commit@3.3.3",
     "gnumake@4.4.1",
     "python@3.10",
-    "python310Packages.ipykernel@6.25.2",
     "black@23.9.1",
     "stdenv.cc.cc.lib",
     "rye@latest",
@@ -11,7 +10,7 @@
   ],
   "shell": {
     "init_hook": [
-      "poetry shell"
+      ". .venv/bin/activate"
     ],
     "scripts": {
       "test": [

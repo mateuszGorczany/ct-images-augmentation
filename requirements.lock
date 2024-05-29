@@ -12,27 +12,21 @@ aiohttp==3.9.5
     # via fsspec
 aiosignal==1.3.1
     # via aiohttp
-altair==5.3.0
-    # via streamlit
-appdirs==1.4.4
-    # via wandb
+annotated-types==0.7.0
+    # via pydantic
+antlr4-python3-runtime==4.9.3
+    # via hydra-core
+    # via omegaconf
 async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-    # via jsonschema
-    # via referencing
-blinker==1.8.2
-    # via streamlit
-cachetools==5.3.3
-    # via streamlit
 certifi==2024.2.2
     # via requests
     # via sentry-sdk
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via streamlit
     # via wandb
 colorama==0.4.6
     # via pretty-errors
@@ -54,34 +48,25 @@ fsspec==2024.3.1
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
-    # via streamlit
     # via wandb
 huggingface-hub==0.23.0
     # via tokenizers
     # via transformers
+hydra-core==1.3.2
+    # via ct-images-augmentation
 idna==3.7
     # via requests
     # via yarl
 jinja2==3.1.4
-    # via altair
-    # via pydeck
     # via torch
-jsonschema==4.22.0
-    # via altair
-jsonschema-specifications==2023.12.1
-    # via jsonschema
 lightning==2.2.4
     # via ct-images-augmentation
 lightning-utilities==0.11.2
     # via lightning
     # via pytorch-lightning
     # via torchmetrics
-markdown-it-py==3.0.0
-    # via rich
 markupsafe==2.1.5
     # via jinja2
-mdurl==0.1.2
-    # via markdown-it-py
 monai==1.3.0
     # via ct-images-augmentation
 mpmath==1.3.0
@@ -92,14 +77,9 @@ multidict==6.0.5
 networkx==3.3
     # via torch
 numpy==1.26.4
-    # via altair
     # via lightning
     # via monai
-    # via pandas
-    # via pyarrow
-    # via pydeck
     # via pytorch-lightning
-    # via streamlit
     # via torchmetrics
     # via transformers
 nvidia-cublas-cu12==12.1.3.1
@@ -130,60 +110,43 @@ nvidia-nvjitlink-cu12==12.4.127
     # via nvidia-cusparse-cu12
 nvidia-nvtx-cu12==12.1.105
     # via torch
+omegaconf==2.3.0
+    # via hydra-core
 packaging==24.0
-    # via altair
     # via huggingface-hub
+    # via hydra-core
     # via lightning
     # via lightning-utilities
     # via pytorch-lightning
-    # via streamlit
     # via torchmetrics
     # via transformers
-pandas==2.2.2
-    # via altair
-    # via streamlit
-pillow==10.3.0
-    # via streamlit
+platformdirs==4.2.2
+    # via wandb
 pretty-errors==1.2.25
     # via torchmetrics
 protobuf==4.25.3
-    # via streamlit
     # via wandb
 psutil==5.9.8
     # via wandb
-pyarrow==16.0.0
-    # via streamlit
-pydeck==0.9.0
-    # via streamlit
-pygments==2.18.0
-    # via rich
-python-dateutil==2.9.0.post0
-    # via pandas
+pydantic==2.7.1
+    # via ct-images-augmentation
+pydantic-core==2.18.2
+    # via pydantic
 pytorch-lightning==2.2.4
     # via lightning
-pytz==2024.1
-    # via pandas
 pyyaml==6.0.1
     # via huggingface-hub
     # via lightning
+    # via omegaconf
     # via pytorch-lightning
     # via transformers
     # via wandb
-referencing==0.35.1
-    # via jsonschema
-    # via jsonschema-specifications
 regex==2024.4.28
     # via transformers
 requests==2.31.0
     # via huggingface-hub
-    # via streamlit
     # via transformers
     # via wandb
-rich==13.7.1
-    # via streamlit
-rpds-py==0.18.1
-    # via jsonschema
-    # via referencing
 safetensors==0.4.3
     # via transformers
 sentry-sdk==2.1.1
@@ -195,21 +158,12 @@ setuptools==69.5.1
     # via wandb
 six==1.16.0
     # via docker-pycreds
-    # via python-dateutil
 smmap==5.0.1
     # via gitdb
-streamlit==1.34.0
-    # via ct-images-augmentation
 sympy==1.12
     # via torch
-tenacity==8.3.0
-    # via streamlit
 tokenizers==0.19.1
     # via transformers
-toml==0.10.2
-    # via streamlit
-toolz==0.12.1
-    # via altair
 torch==2.3.0
     # via ct-images-augmentation
     # via lightning
@@ -219,8 +173,6 @@ torch==2.3.0
 torchmetrics==1.4.0
     # via lightning
     # via pytorch-lightning
-tornado==6.4
-    # via streamlit
 tqdm==4.66.4
     # via huggingface-hub
     # via lightning
@@ -231,21 +183,17 @@ transformers==4.40.2
 triton==2.3.0
     # via torch
 typing-extensions==4.11.0
-    # via altair
     # via huggingface-hub
     # via lightning
     # via lightning-utilities
+    # via pydantic
+    # via pydantic-core
     # via pytorch-lightning
-    # via streamlit
     # via torch
-tzdata==2024.1
-    # via pandas
 urllib3==2.2.1
     # via requests
     # via sentry-sdk
-wandb==0.16.6
+wandb==0.17.0
     # via ct-images-augmentation
-watchdog==4.0.0
-    # via streamlit
 yarl==1.9.4
     # via aiohttp

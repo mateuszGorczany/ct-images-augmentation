@@ -5,6 +5,7 @@ import hydra
 import torch
 from omegaconf import DictConfig, OmegaConf
 from pydantic.dataclasses import dataclass
+import wandb
 
 
 class Stage(Enum):
@@ -15,8 +16,8 @@ class Stage(Enum):
 
 @dataclass
 class ModelParameters:
-    learning_rate: float = 0.1
-    epochs: int = 10
+    learning_rate: float
+    epochs: int
 
 
 class VisionTransformer(torch.nn.Module):
@@ -40,6 +41,27 @@ class Runner(Protocol):
         ...
 
 
+class GanRunner(Runner):
+    def __init__(
+        self, model: torch.nn.Module, run: wandb.Run, run_config=ModelParameters
+    ):
+        self.model = model
+        self.run = run
+        self.run_config = run_config
+
+    def train(self) -> None:
+        for epoch in self.run_config.epochs:
+            loss = ...
+            self.run.log({"loss": loss})
+
+    def test(self) -> None:
+        # model()
+        pass
+
+    def validate(self) -> None:
+        pass
+
+
 class ExperimentTracker(Protocol):
     def log_metric(self, metric_name: str, metric_value: float) -> None:
         ...
@@ -51,9 +73,15 @@ class ExperimentTracker(Protocol):
 def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
     model_params = ModelParameters(**cfg.model)
-    model = VisionTransformer(model_params)
-    print(model_params)
-    print(model)
+    model_types: list[torch.nn.Module] = [VisionTransformer]
+
+    for model_type in model_types:
+        run = wandb.init(project="my_first_project", config=dict(model_params))
+        model = model_type(model_params)
+        runner = GanRunner(model, run, model_params)
+        runner.train()
+        runner.validate()
+        runner.test()
 
 
 if __name__ == "__main__":

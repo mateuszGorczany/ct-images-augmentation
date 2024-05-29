@@ -19,12 +19,6 @@
       "source": "devbox-search",
       "version": "3.3.3"
     },
-    "python310Packages.ipykernel@6.25.2": {
-      "last_modified": "2023-11-19T17:46:56Z",
-      "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#python310Packages.ipykernel",
-      "source": "devbox-search",
-      "version": "6.25.2"
-    },
     "python@3.10": {
       "last_modified": "2023-11-19T17:46:56Z",
       "plugin_version": "0.0.1",

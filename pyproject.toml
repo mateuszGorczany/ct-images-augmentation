@@ -6,12 +6,13 @@ authors = [
     { name = "mateuszGorczany", email = "mateusz.g64@interia.pl" }
 ]
 dependencies = [
-    "wandb>=0.16.6",
+    "wandb>=0.17.0",
     "torch>=2.3.0",
     "monai>=1.3.0",
     "transformers>=4.40.2",
     "lightning>=2.2.4",
-    "streamlit>=1.34.0",
+    "pydantic>=2.7.1",
+    "hydra-core>=1.3.2",
 ]
 readme = "README.md"
 requires-python = "== 3.10.13"
@@ -24,6 +25,7 @@ build-backend = "hatchling.build"
 managed = true
 dev-dependencies = [
     "ipykernel>=6.29.4",
+    "streamlit>=1.34.0",
 ]
 
 [tool.hatch.metadata]
