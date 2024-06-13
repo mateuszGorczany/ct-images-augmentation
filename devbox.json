@@ -10,7 +10,8 @@
   ],
   "shell": {
     "init_hook": [
-      ". .venv/bin/activate"
+      ". .venv/bin/activate",
+      "rye sync"
     ],
     "scripts": {
       "test": [
