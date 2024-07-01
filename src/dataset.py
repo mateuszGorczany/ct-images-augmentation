@@ -62,4 +62,5 @@ def train_transforms(ds_config: DatasetConfig):
 # %%
 def load_dataset(path: Path | str):
     files = list(Path(path).glob("*.nii.gz"))
-    return CacheDataset(files, train_transforms)
+    default_config = DatasetConfig()
+    return CacheDataset(files, train_transforms(default_config))
