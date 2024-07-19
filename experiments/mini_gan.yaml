@@ -10,7 +10,7 @@ training:
   # lr_decay_factor: 0.001
   # weight_decay: 0.1
   # num_steps: 20000
-  num_nodes: 2
+  num_nodes: 1
   device: cpu
   amp_precision: bfloat16
   weight_precision: float32

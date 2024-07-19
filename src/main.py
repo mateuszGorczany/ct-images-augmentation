@@ -19,7 +19,11 @@ from dacite import from_dict
 from src.dataset import load_dataset
 from torch.utils.data import DataLoader
 import lightning as L
-from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
+
+# from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
+from pytorch_lightning.loggers import WandbLogger
 from src.utils import checkpoints_dir_path
 
 MODELS_AND_CONFIGS = {
@@ -80,8 +84,8 @@ class Runner:
         self.model_config = None
 
     def train(self):
-        self.trainer = L.Trainer(
-            logger=L.pytorch.loggers.WandbLogger(self.training_config.wandb_project),
+        self.trainer = Trainer(
+            logger=WandbLogger(self.training_config.wandb_project),
             default_root_dir=checkpoints_dir_path(cfg.name),
             accelerator="auto",
             # devices=-1,
@@ -119,7 +123,7 @@ class Runner:
                 device=self.training_config.device
             )
 
-            self.model.reset_parameters()
+            # self.model.reset_parameters()
 
             # self.trainer.fit(self.model, self.train_loader, self.val_loader)
             self.trainer.fit(self.model, self.train_loader)
