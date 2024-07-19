@@ -11,6 +11,10 @@ from src.models.simple_gan import (
     GAN as SimpleGAN,
     ModelParameters as SimpleGanModelParameters,
 )
+from src.models.mini_gan import (
+    GAN as MiniGAN,
+    ModelParameters as MiniGanModelParameters,
+)
 from dacite import from_dict
 from src.dataset import load_dataset
 from torch.utils.data import DataLoader
@@ -19,6 +23,7 @@ from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
 from src.utils import checkpoints_dir_path
 
 MODELS_AND_CONFIGS = {
+    "mini_gan": (MiniGAN, MiniGanModelParameters),
     "simple_gan": (SimpleGAN, SimpleGanModelParameters),
     "vision_transformer": (VisionTransformer, VisionTransformerModelParameters),
 }
@@ -27,7 +32,6 @@ MODELS_AND_CONFIGS = {
 @dataclass
 class TrainingConfig:
     batch_size: int
-    learning_rate: int
     epochs: int
     seed: int
     num_nodes: int
@@ -53,20 +57,24 @@ class Runner:
             project=self.training_config.wandb_project, name=cfg.name, config=dict(cfg)
         )
 
-        self.dataset = load_dataset(cfg.dataset.name, cfg.dataset.kwargs)
+        self.dataset = load_dataset(cfg.dataset.path)
 
         self.train_loader = DataLoader(
-            self.dataset.train_split, batch_size=self.training_config.batch_size
+            self.dataset,
+            batch_size=self.training_config.batch_size,
+            num_workers=8,
+            shuffle=True,
+            pin_memory=torch.cuda.is_available(),
         )
-        self.val_loaders = {
-            key: DataLoader(val_ds, batch_size=cfg.training.batch_size)
-            for key, val_ds in self.dataset.validation_split.items()
-        }
+        # self.val_loaders = {
+        #     key: DataLoader(val_ds, batch_size=cfg.training.batch_size)
+        #     for key, val_ds in self.dataset.validation_split.items()
+        # }
 
-        self.train_metrics = self.dataset.train_metrics.to(device=cfg.training.device)
-        self.val_metrics = self.dataset.validation_metrics.to(
-            device=cfg.training.device
-        )
+        # self.train_metrics = self.dataset.train_metrics.to(device=cfg.training.device)
+        # self.val_metrics = self.dataset.validation_metrics.to(
+        #     device=cfg.training.device
+        # )
 
         self.model = None
         self.model_config = None
@@ -76,7 +84,7 @@ class Runner:
             logger=L.pytorch.loggers.WandbLogger(self.training_config.wandb_project),
             default_root_dir=checkpoints_dir_path(cfg.name),
             accelerator="auto",
-            devices=-1,
+            # devices=-1,
             num_nodes=self.training_config.num_nodes,
             max_epochs=self.training_config.epochs,
             callbacks=[
@@ -113,7 +121,8 @@ class Runner:
 
             self.model.reset_parameters()
 
-            self.trainer.fit(self.model, self.train_loader, self.val_loader)
+            # self.trainer.fit(self.model, self.train_loader, self.val_loader)
+            self.trainer.fit(self.model, self.train_loader)
             # Load best checkpoint after training
             self.model = model_class.load_from_checkpoint(
                 self.trainer.checkpoint_callback.best_model_path

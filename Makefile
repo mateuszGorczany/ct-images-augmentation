@@ -14,7 +14,10 @@ push_images:
 
 
 experiment-vision_transformer:
-	devbox run python ./src/main.py --config ./experiments/visoin_transformer.yaml
+	devbox run python ./src/main.py --config ./experiments/vision_transformer.yaml
 
 experiment-vision_gan:
 	devbox run python ./src/main.py --config ./experiments/gan.yaml
+
+experiment-mini_gan:
+	devbox run python ./src/main.py --config ./experiments/mini_gan.yaml

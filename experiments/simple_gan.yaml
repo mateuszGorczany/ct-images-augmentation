@@ -1,8 +1,7 @@
-name: vision_transformer
+name: mini_gan
 
 training:
   batch_size: 1
-  lr: 0.0002
   seed: 42
   # val_every_step: 200
   # lr_warmup_steps: 2000
@@ -17,6 +16,7 @@ training:
   enable_mixed_precision: true
 
 model:
+  learning_rate: 0.0002
   nz: 10
   beta1: 0.5
 

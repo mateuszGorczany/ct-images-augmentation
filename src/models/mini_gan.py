@@ -3,34 +3,14 @@ import torch.nn as nn
 import torch.optim as optim
 import pytorch_lightning as pl
 
-# from monai.transforms import (
-#     Compose,
-#     LoadImage,
-#     AddChannel,
-#     ScaleIntensity,
-#     ToTensor,
-#     Resize,
-# )
-# from monai.data import DataLoader, Dataset
-# from torch.utils.data import random_split
 from pydantic.dataclasses import dataclass
 
 
-# Define Generator
 class Generator(nn.Module):
     def __init__(self, nz):
         super(Generator, self).__init__()
         self.main = nn.Sequential(
-            nn.ConvTranspose2d(nz, 512, 4, 1, 0, bias=False),
-            nn.BatchNorm2d(512),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(512, 256, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(256),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(256, 128, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(128),
-            nn.ReLU(True),
-            nn.ConvTranspose2d(128, 64, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(nz, 64, 4, 1, 0, bias=False),
             nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.ConvTranspose2d(64, 1, 4, 2, 1, bias=False),
@@ -48,16 +28,7 @@ class Discriminator(nn.Module):
         self.main = nn.Sequential(
             nn.Conv2d(1, 64, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(64, 128, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(128, 256, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(256, 512, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(512, 1, 4, 1, 0, bias=False),
+            nn.Conv2d(64, 1, 4, 2, 1, bias=False),
             nn.Sigmoid(),
         )
 
@@ -67,9 +38,9 @@ class Discriminator(nn.Module):
 
 @dataclass
 class ModelParameters:
+    learning_rate: float
     beta1: float
     nz: int
-    learning_rate: float
 
 
 class GAN(pl.LightningModule):
