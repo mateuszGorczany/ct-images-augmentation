@@ -1,6 +1,9 @@
 env:
 	devbox shell
 
+lint:
+	pre-commit
+
 download_data:
 	dvc pull
 

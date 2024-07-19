@@ -1,12 +1,15 @@
 import torch
 from omegaconf import DictConfig, OmegaConf
 from pydantic.dataclasses import dataclass
-from lightning.pytorch.cli import LightningCLI
 import wandb
 from argparse import ArgumentParser
 from src.models.vision_transformer import (
     VisionTransformer,
     ModelParameters as VisionTransformerModelParameters,
+)
+from src.models.simple_gan import (
+    GAN as SimpleGAN,
+    ModelParameters as SimpleGanModelParameters,
 )
 from dacite import from_dict
 from src.dataset import load_dataset
@@ -16,7 +19,8 @@ from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
 from src.utils import checkpoints_dir_path
 
 MODELS_AND_CONFIGS = {
-    "vision_transformer": (VisionTransformer, VisionTransformerModelParameters)
+    "simple_gan": (SimpleGAN, SimpleGanModelParameters),
+    "vision_transformer": (VisionTransformer, VisionTransformerModelParameters),
 }
 
 
@@ -109,7 +113,7 @@ class Runner:
 
             self.model.reset_parameters()
 
-            self.trainer.fit(self.model, self.train_loader, val_loader)
+            self.trainer.fit(self.model, self.train_loader, self.val_loader)
             # Load best checkpoint after training
             self.model = model_class.load_from_checkpoint(
                 self.trainer.checkpoint_callback.best_model_path

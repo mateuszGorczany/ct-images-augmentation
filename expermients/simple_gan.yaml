@@ -1,0 +1,24 @@
+name: vision_transformer
+
+training:
+  batch_size: 1
+  lr: 0.0002
+  seed: 42
+  # val_every_step: 200
+  # lr_warmup_steps: 2000
+  # lr_decay_until_steps: ${.num_steps}
+  # lr_decay_factor: 0.001
+  # weight_decay: 0.1
+  # num_steps: 20000
+  num_nodes: 2
+  device: cuda
+  amp_precision: bfloat16
+  weight_precision: float32
+  enable_mixed_precision: true
+
+model:
+  nz: 10
+  beta1: 0.5
+
+dataset:
+  path: /ravana/d3d_work/micorl/data/ct_images_prostate_32fixed/
