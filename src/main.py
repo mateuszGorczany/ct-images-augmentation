@@ -88,14 +88,16 @@ class Runner:
             logger=WandbLogger(self.training_config.wandb_project),
             default_root_dir=checkpoints_dir_path(cfg.name),
             accelerator="auto",
-            # devices=-1,
+            devices=1,
             num_nodes=self.training_config.num_nodes,
             max_epochs=self.training_config.epochs,
             callbacks=[
-                ModelCheckpoint(save_weights_only=True, mode="max", monitor="val_acc"),
+                ModelCheckpoint(save_weights_only=True, dirpath=checkpoints_dir_path(cfg.name), filename=cfg.name, mode="max", save_on_train_epoch_end=True),
+                # ModelCheckpoint(save_weights_only=True, save_on_train_epoch_end=True),
                 LearningRateMonitor("epoch"),
             ],
-            fast_dev_run=True,
+            # fast_dev_run=True,
+            log_every_n_steps=10,
         )
         # self.trainer.logger._log_graph = (
         #     True  # If True, we plot the computation graph in tensorboard
@@ -126,11 +128,12 @@ class Runner:
             # self.model.reset_parameters()
 
             # self.trainer.fit(self.model, self.train_loader, self.val_loader)
-            self.trainer.fit(self.model, self.train_loader)
+            self.trainer.fit(self.model, self.train_loader, self.train_loader)
             # Load best checkpoint after training
             self.model = model_class.load_from_checkpoint(
                 self.trainer.checkpoint_callback.best_model_path
             )
+            self.model.config = self.model_config
 
         return self.model
 
@@ -170,12 +173,12 @@ def main(cfg: DictConfig) -> None:
     runner = Runner(cfg)
     runner.train()
     # Test best model on validation and test set
-    result = {
-        "test": runner.test()[0]["test_acc"],
-        "val": runner.validate()[0]["test_acc"],
-    }
+    # result = {
+    #     "test": runner.test()[0]["test_acc"],
+    #     "val": runner.validate()[0]["test_acc"],
+    # }
 
-    print(result)
+    # print(result)
 
 
 if __name__ == "__main__":
