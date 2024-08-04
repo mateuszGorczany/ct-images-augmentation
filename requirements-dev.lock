@@ -121,6 +121,8 @@ lightning-utilities==0.11.2
     # via lightning
     # via pytorch-lightning
     # via torchmetrics
+lpips==0.1.4
+    # via ct-images-augmentation
 markdown==3.6
     # via tensorboard
 markdown-it-py==3.0.0
@@ -136,6 +138,9 @@ matplotlib-inline==0.1.7
 mdurl==0.1.2
     # via markdown-it-py
 monai==1.3.0
+    # via ct-images-augmentation
+    # via monai-generative
+monai-generative==0.2.3
     # via ct-images-augmentation
 mpmath==1.3.0
     # via sympy
@@ -154,6 +159,7 @@ numpy==1.26.4
     # via contourpy
     # via imageio
     # via lightning
+    # via lpips
     # via matplotlib
     # via monai
     # via nibabel
@@ -296,6 +302,7 @@ safetensors==0.4.3
 scikit-image==0.24.0
     # via ct-images-augmentation
 scipy==1.14.0
+    # via lpips
     # via scikit-image
 sentry-sdk==2.1.1
     # via wandb
@@ -333,6 +340,7 @@ toolz==0.12.1
 torch==2.3.1
     # via ct-images-augmentation
     # via lightning
+    # via lpips
     # via monai
     # via pytorch-lightning
     # via torchmetrics
@@ -342,6 +350,7 @@ torchmetrics==1.4.0
     # via pytorch-lightning
 torchvision==0.18.1
     # via ct-images-augmentation
+    # via lpips
 tornado==6.4
     # via ipykernel
     # via jupyter-client
@@ -349,6 +358,7 @@ tornado==6.4
 tqdm==4.66.4
     # via huggingface-hub
     # via lightning
+    # via lpips
     # via pytorch-lightning
     # via transformers
 traitlets==5.14.3

@@ -6,7 +6,8 @@
     "black@23.9.1",
     "stdenv.cc.cc.lib",
     "rye@latest",
-    "uv@latest"
+    "uv@latest",
+    "fpp@latest"
   ],
   "shell": {
     "init_hook": [

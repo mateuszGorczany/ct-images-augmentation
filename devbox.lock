@@ -7,6 +7,54 @@
       "source": "devbox-search",
       "version": "23.9.1"
     },
+    "fpp@latest": {
+      "last_modified": "2024-07-07T07:43:47Z",
+      "resolved": "github:NixOS/nixpkgs/b60793b86201040d9dee019a05089a9150d08b5b#fpp",
+      "source": "devbox-search",
+      "version": "0.9.5",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/fmanzyp5vig4pismlnps2y60h869yk3v-fpp-0.9.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/fmanzyp5vig4pismlnps2y60h869yk3v-fpp-0.9.5"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/fx097bxdygplipm2whgvzb0hfybnhkx3-fpp-0.9.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/fx097bxdygplipm2whgvzb0hfybnhkx3-fpp-0.9.5"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1yw8db9ssgfgc94w8hsmi0nilvwi4pz8-fpp-0.9.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1yw8db9ssgfgc94w8hsmi0nilvwi4pz8-fpp-0.9.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4kv9blpsdb3rxdib56jvcvi6pklw1qmg-fpp-0.9.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4kv9blpsdb3rxdib56jvcvi6pklw1qmg-fpp-0.9.5"
+        }
+      }
+    },
     "gnumake@4.4.1": {
       "last_modified": "2023-11-19T17:46:56Z",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#gnumake",
