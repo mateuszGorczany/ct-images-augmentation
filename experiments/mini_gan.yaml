@@ -1,9 +1,10 @@
 name: mini_gan
 
 training:
-  batch_size: 2
+  batch_size: 5
   seed: 42
   epochs: 10
+  train_fraction: 0.9
   # val_every_step: 200
   # lr_warmup_steps: 2000
   # lr_decay_until_steps: ${.num_steps}
@@ -16,14 +17,19 @@ training:
   # weight_precision: float32
   # enable_mixed_precision: true
 
+dataset:
+  path: /ravana/d3d_work/micorl/data/ct_images_prostate_32fixed/
+  cache: "disk"
+  image_size: 64  # image height and width
+  num_slices: 32  # image depth
+  win_wid: 400  # window width for converting to HO scale
+  win_lev: 60
+
+
 model:
   learning_rate: 0.0002
-  img_shape: [1, 256, 256, 32]
+  img_shape: [1, 64, 64, 32]
   latent_dim: 100
   beta1: 0.5
   beta2: 0.999
   device: "cuda"
-
-dataset:
-  path: /ravana/d3d_work/micorl/data/ct_images_prostate_32fixed/
-  # path: /home/mateusz/Documents/MGR/Thesis/ct-images-augmentation/data/input/ct_images

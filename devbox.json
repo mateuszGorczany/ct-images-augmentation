@@ -7,7 +7,10 @@
     "stdenv.cc.cc.lib",
     "rye@latest",
     "uv@latest",
-    "fpp@latest"
+    "fpp@latest",
+    "nvtop@latest",
+    "fzf@latest",
+    "dcm2niix@latest"
   ],
   "shell": {
     "init_hook": [

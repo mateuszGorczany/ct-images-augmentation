@@ -61,6 +61,8 @@ exceptiongroup==1.2.1
     # via ipython
 executing==2.0.1
     # via stack-data
+fastmri==0.3.0
+    # via ct-images-augmentation
 filelock==3.14.0
     # via huggingface-hub
     # via torch
@@ -83,6 +85,8 @@ gitpython==3.1.43
     # via wandb
 grpcio==1.65.1
     # via tensorboard
+h5py==3.11.0
+    # via fastmri
 huggingface-hub==0.23.0
     # via tokenizers
     # via transformers
@@ -157,6 +161,8 @@ nibabel==5.2.1
 numpy==1.26.4
     # via altair
     # via contourpy
+    # via fastmri
+    # via h5py
     # via imageio
     # via lightning
     # via lpips
@@ -222,6 +228,7 @@ packaging==24.0
     # via transformers
 pandas==2.2.2
     # via altair
+    # via fastmri
     # via streamlit
 parso==0.8.4
     # via jedi
@@ -269,10 +276,12 @@ python-dateutil==2.9.0.post0
     # via matplotlib
     # via pandas
 pytorch-lightning==2.2.4
+    # via fastmri
     # via lightning
 pytz==2024.1
     # via pandas
 pyyaml==6.0.1
+    # via fastmri
     # via huggingface-hub
     # via lightning
     # via omegaconf
@@ -297,10 +306,13 @@ rich==13.7.1
 rpds-py==0.18.1
     # via jsonschema
     # via referencing
+runstats==2.0.0
+    # via fastmri
 safetensors==0.4.3
     # via transformers
 scikit-image==0.24.0
     # via ct-images-augmentation
+    # via fastmri
 scipy==1.14.0
     # via lpips
     # via scikit-image
@@ -339,6 +351,7 @@ toolz==0.12.1
     # via altair
 torch==2.3.1
     # via ct-images-augmentation
+    # via fastmri
     # via lightning
     # via lpips
     # via monai
@@ -346,10 +359,12 @@ torch==2.3.1
     # via torchmetrics
     # via torchvision
 torchmetrics==1.4.0
+    # via fastmri
     # via lightning
     # via pytorch-lightning
 torchvision==0.18.1
     # via ct-images-augmentation
+    # via fastmri
     # via lpips
 tornado==6.4
     # via ipykernel

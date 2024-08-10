@@ -1,6 +1,7 @@
 # %%
 
-from monai.data import CacheDataset
+from typing import Literal
+from monai.data import PersistentDataset, CacheDataset
 from monai.transforms import (
     CenterSpatialCrop,
     Compose,
@@ -14,13 +15,18 @@ from monai.transforms import (
 from pydantic.dataclasses import dataclass
 from pathlib import Path
 
+CachingType = Literal["memory", "disk"]
+
 
 @dataclass
 class DatasetConfig:
-    image_size = 256  # image height and width
-    num_slices = 32  # image depth
-    win_wid = 400  # window width for converting to HO scale
-    win_lev = 60  # window level for converting to HO scale
+    path: str
+    caching: CachingType = "disk"
+    image_size: int = 256  # image height and width
+    num_slices: int = 32  # image depth
+    win_wid: int = 400  # window width for converting to HO scale
+    win_lev: int = 60  # window level for converting to HO scale
+    cache_dir = "./data/preprocessed"
 
     # batch_size = 4
     # lambda_gp = 10 # controls how much of gradient penalty will be added to critic loss
@@ -62,7 +68,16 @@ def train_transforms(ds_config: DatasetConfig):
 #     ]
 # )
 # %%
-def load_dataset(path: Path | str):
-    files = list(Path(path).glob("*.nii.gz"))
-    default_config = DatasetConfig()
-    return CacheDataset(files, train_transforms(default_config))
+def load_dataset(ds_config: DatasetConfig) -> CacheDataset | PersistentDataset:
+    files = list(Path(ds_config.path).glob("*.nii.gz"))
+    match ds_config.caching:
+        case "disk":
+            cache_dir = Path(ds_config.cache_dir) / Path(ds_config.path).name
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            return PersistentDataset(
+                files, train_transforms(ds_config), cache_dir=cache_dir
+            )
+        case "memory":
+            return CacheDataset(files, train_transforms(ds_config))
+
+    raise ValueError(f"Unknown dataset type: {ds_config.caching}")

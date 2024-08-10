@@ -1,8 +1,13 @@
+from monai.data.dataset import CacheDataset
 import torch
 from omegaconf import DictConfig, OmegaConf
 from pydantic.dataclasses import dataclass
 import wandb
 from argparse import ArgumentParser
+
+from lightning.pytorch.loggers import TensorBoardLogger
+from wandb.sdk.lib.disabled import RunDisabled
+from wandb.sdk.wandb_run import Run
 from src.models.vision_transformer import (
     VisionTransformer,
     ModelParameters as VisionTransformerModelParameters,
@@ -15,21 +20,27 @@ from src.models.mini_gan import (
     GAN as MiniGAN,
     ModelParameters as MiniGanModelParameters,
 )
+from src.models.monai_autoencoder import (
+    GAN as MonaiAutoencoder,
+    ModelParameters as MonaiAutoencoderModelParameters,
+)
 from dacite import from_dict
-from src.dataset import load_dataset
+from src.dataset import load_dataset, DatasetConfig
 from torch.utils.data import DataLoader
 import lightning as L
 
-# from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
-from pytorch_lightning.loggers import WandbLogger
 from src.utils import checkpoints_dir_path
+from typing import Literal
+
+Mode = Literal["train", "retrain", "test"]
 
 MODELS_AND_CONFIGS = {
     "mini_gan": (MiniGAN, MiniGanModelParameters),
     "simple_gan": (SimpleGAN, SimpleGanModelParameters),
     "vision_transformer": (VisionTransformer, VisionTransformerModelParameters),
+    "monai_autoencoder": (MonaiAutoencoder, MonaiAutoencoderModelParameters),
 }
 
 
@@ -41,6 +52,7 @@ class TrainingConfig:
     num_nodes: int
     device: str
     wandb_project = "ct-images"
+    train_ratio: float
 
 
 torch_dtype_map: dict[str, torch.dtype] = {
@@ -51,139 +63,142 @@ torch_dtype_map: dict[str, torch.dtype] = {
 
 
 class Runner:
-    def __init__(self, cfg: DictConfig) -> None:
-        self.cfg = cfg
+    def __init__(self, cfg: DictConfig, mode: Mode = "train") -> None:
+        self.cfg: DictConfig = cfg
+        self.mode: Mode = mode
         self.training_config: TrainingConfig = from_dict(
             TrainingConfig, OmegaConf.to_container(cfg.training)
         )
 
-        self.run = wandb.init(
-            project=self.training_config.wandb_project, name=cfg.name, config=dict(cfg)
+        self.run: Run | RunDisabled = wandb.init(
+            project=self.training_config.wandb_project,
+            name=cfg.name,
+            config=dict(cfg),
+            sync_tensorboard=True,
         )
 
-        self.dataset = load_dataset(cfg.dataset.path)
+        dataset_config: DatasetConfig = from_dict(
+            DatasetConfig, OmegaConf.to_container(cfg.dataset)
+        )
+        self.dataset: CacheDataset = load_dataset(dataset_config)
+
+        train_len: int = int(self.training_config.train_ratio * len(self.dataset))
 
         self.train_loader = DataLoader(
-            self.dataset,
+            self.dataset[:train_len],
             batch_size=self.training_config.batch_size,
             num_workers=8,
             shuffle=True,
             pin_memory=torch.cuda.is_available(),
         )
-        # self.val_loaders = {
-        #     key: DataLoader(val_ds, batch_size=cfg.training.batch_size)
-        #     for key, val_ds in self.dataset.validation_split.items()
-        # }
-
-        # self.train_metrics = self.dataset.train_metrics.to(device=cfg.training.device)
-        # self.val_metrics = self.dataset.validation_metrics.to(
-        #     device=cfg.training.device
-        # )
+        self.val_loader = DataLoader(
+            self.dataset[train_len:],
+            batch_size=self.training_config.batch_size,
+            num_workers=8,
+            shuffle=False,
+            pin_memory=torch.cuda.is_available(),
+        )
 
         self.model = None
         self.model_config = None
 
     def train(self):
         self.trainer = Trainer(
-            logger=WandbLogger(self.training_config.wandb_project),
+            # logger=WandbLogger(self.training_config.wandb_project),
+            logger=TensorBoardLogger("./runs", name=self.training_config.wandb_project),
             default_root_dir=checkpoints_dir_path(cfg.name),
-            accelerator="auto",
-            devices=1,
+            accelerator=self.training_config.device,
+            # devices="auto",
+            devices=-1,
             num_nodes=self.training_config.num_nodes,
             max_epochs=self.training_config.epochs,
             callbacks=[
-                ModelCheckpoint(save_weights_only=True, dirpath=checkpoints_dir_path(cfg.name), filename=cfg.name, mode="max", save_on_train_epoch_end=True),
-                # ModelCheckpoint(save_weights_only=True, save_on_train_epoch_end=True),
+                ModelCheckpoint(
+                    dirpath=checkpoints_dir_path(cfg.name),
+                    filename=cfg.name,
+                    mode="max",
+                    save_on_train_epoch_end=True,
+                ),
                 LearningRateMonitor("epoch"),
             ],
-            # fast_dev_run=True,
-            log_every_n_steps=10,
+            strategy="ddp_find_unused_parameters_true"
+            # log_every_n_steps=10,
         )
-        # self.trainer.logger._log_graph = (
-        #     True  # If True, we plot the computation graph in tensorboard
-        # )
-        # self.trainer.logger._default_hp_metric = (
-        #     None  # Optional logging argument that we don't need
-        # )
 
         model_class, model_config_class = MODELS_AND_CONFIGS[cfg.name]
 
         # Check whether pretrained model exists. If yes, load it and skip training
         pretrained_model_filename = checkpoints_dir_path(cfg.name) / f"{cfg.name}.ckpt"
-        if pretrained_model_filename.is_file():
-            print(
-                "Found pretrained model at %s, loading..." % pretrained_model_filename
-            )
-            # Automatically loads the model with the saved hyperparameters
-            self.model = model_class.load_from_checkpoint(pretrained_model_filename)
-        else:
-            L.seed_everything(self.training_config.seed)  # To be reproducible
-            self.model_config = from_dict(
-                model_config_class, OmegaConf.to_container(cfg.model)
-            )
-            self.model = model_class(self.model_config).to(
-                device=self.training_config.device
-            )
 
-            # self.model.reset_parameters()
+        match self.mode:
+            case "retrain":
+                if not pretrained_model_filename.is_file():
+                    print(
+                        "Not Found pretrained model at %s, ..."
+                        % pretrained_model_filename
+                    )
+                    import sys
 
-            # self.trainer.fit(self.model, self.train_loader, self.val_loader)
-            self.trainer.fit(self.model, self.train_loader, self.train_loader)
-            # Load best checkpoint after training
-            self.model = model_class.load_from_checkpoint(
-                self.trainer.checkpoint_callback.best_model_path
-            )
-            self.model.config = self.model_config
+                    sys.exit(1)
+                else:
+                    print(
+                        "Found pretrained model at %s, loading..."
+                        % pretrained_model_filename
+                    )
+                    # Automatically loads the model with the saved hyperparameters
+                    self.model = model_class.load_from_checkpoint(
+                        pretrained_model_filename
+                    )
 
-        return self.model
+                    self.trainer.fit(self.model, self.train_loader, self.val_loader)
+
+                    return self.model
+            case "test":
+                self.model = model_class.load_from_checkpoint(
+                    self.trainer.checkpoint_callback.best_model_path
+                )
+                return self.model
+
+            case "train":
+                L.seed_everything(self.training_config.seed)  # To be reproducible
+                self.model_config = from_dict(
+                    model_config_class, OmegaConf.to_container(cfg.model)
+                )
+                self.model = model_class(self.model_config).to(
+                    device=self.training_config.device
+                )
+
+                # self.model.reset_parameters()
+                self.trainer.fit(self.model, self.train_loader, self.val_loader)
+                # Load best checkpoint after training
+                self.model = model_class.load_from_checkpoint(
+                    self.trainer.checkpoint_callback.best_model_path
+                )
+                self.model.config = self.model_config
+
+                return self.model
 
     def test(self):
-        return self.trainer.test(
-            self.model, dataloaders=self.test_loader, verbose=False
-        )
+        return self.trainer.test(self.model, dataloaders=self.val_loader, verbose=False)
 
     def validate(self):
         return self.trainer.test(self.model, dataloaders=self.val_loader, verbose=False)
 
 
-def main(cfg: DictConfig) -> None:
+def main(cfg: DictConfig, mode: str) -> None:
     print(OmegaConf.to_yaml(cfg))
-
-    # model = model.to(dtype=torch_dtype_map[cfg.training.weight_precision])
-
-    # optim_groups = model._create_weight_decay_optim_groups()
-
-    # optimizer = optim.AdamW(
-    #     (
-    #         {"weight_decay": cfg.training.weight_decay, "params": optim_groups[0]},
-    #         {"weight_decay": 0.0, "params": optim_groups[1]},
-    #     ),
-    #     lr=cfg.training.lr,
-    # )
-
-    # lr_scheduler = LinearWarmupCosineAnnealing(
-    #     optimizer,
-    #     cfg.training.lr_warmup_steps,
-    #     cfg.training.lr_decay_until_steps,
-    #     cfg.training.lr,
-    #     cfg.training.lr_decay_factor * cfg.training.lr,
-    # )
-    # Data
-
-    runner = Runner(cfg)
+    runner = Runner(cfg, mode=mode)
     runner.train()
-    # Test best model on validation and test set
-    # result = {
-    #     "test": runner.test()[0]["test_acc"],
-    #     "val": runner.validate()[0]["test_acc"],
-    # }
-
-    # print(result)
+    print(runner.test())
+    wandb.finish()
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--config")
+    parser.add_argument(
+        "--mode", type=str, default="train", choices=["train", "retrain", "test"]
+    )
 
     args = parser.parse_args()
 
@@ -191,4 +206,4 @@ if __name__ == "__main__":
         config_yaml = fp.read()
     cfg = OmegaConf.create(config_yaml)
     OmegaConf.resolve(cfg)
-    main(cfg)
+    main(cfg, mode=args.mode)

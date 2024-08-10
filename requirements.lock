@@ -38,6 +38,8 @@ dacite==1.8.1
     # via ct-images-augmentation
 docker-pycreds==0.4.0
     # via wandb
+fastmri==0.3.0
+    # via ct-images-augmentation
 filelock==3.14.0
     # via huggingface-hub
     # via torch
@@ -57,6 +59,8 @@ gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
     # via wandb
+h5py==3.11.0
+    # via fastmri
 huggingface-hub==0.23.0
     # via tokenizers
     # via transformers
@@ -102,12 +106,15 @@ nibabel==5.2.1
     # via ct-images-augmentation
 numpy==1.26.4
     # via contourpy
+    # via fastmri
+    # via h5py
     # via imageio
     # via lightning
     # via lpips
     # via matplotlib
     # via monai
     # via nibabel
+    # via pandas
     # via pytorch-lightning
     # via scikit-image
     # via scipy
@@ -157,6 +164,8 @@ packaging==24.0
     # via scikit-image
     # via torchmetrics
     # via transformers
+pandas==2.2.2
+    # via fastmri
 pillow==10.3.0
     # via imageio
     # via matplotlib
@@ -178,9 +187,14 @@ pyparsing==3.1.2
     # via matplotlib
 python-dateutil==2.9.0.post0
     # via matplotlib
+    # via pandas
 pytorch-lightning==2.2.4
+    # via fastmri
     # via lightning
+pytz==2024.1
+    # via pandas
 pyyaml==6.0.1
+    # via fastmri
     # via huggingface-hub
     # via lightning
     # via omegaconf
@@ -193,10 +207,13 @@ requests==2.31.0
     # via huggingface-hub
     # via transformers
     # via wandb
+runstats==2.0.0
+    # via fastmri
 safetensors==0.4.3
     # via transformers
 scikit-image==0.24.0
     # via ct-images-augmentation
+    # via fastmri
 scipy==1.14.0
     # via lpips
     # via scikit-image
@@ -220,6 +237,7 @@ tokenizers==0.19.1
     # via transformers
 torch==2.3.1
     # via ct-images-augmentation
+    # via fastmri
     # via lightning
     # via lpips
     # via monai
@@ -227,10 +245,12 @@ torch==2.3.1
     # via torchmetrics
     # via torchvision
 torchmetrics==1.4.0
+    # via fastmri
     # via lightning
     # via pytorch-lightning
 torchvision==0.18.1
     # via ct-images-augmentation
+    # via fastmri
     # via lpips
 tqdm==4.66.4
     # via huggingface-hub
@@ -250,6 +270,8 @@ typing-extensions==4.11.0
     # via pydantic-core
     # via pytorch-lightning
     # via torch
+tzdata==2024.1
+    # via pandas
 urllib3==2.2.1
     # via requests
     # via sentry-sdk
