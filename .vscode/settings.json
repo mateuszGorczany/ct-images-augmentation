@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/models/transformers_ct_reconstruction"
+    ]
+}

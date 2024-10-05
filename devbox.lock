@@ -1,6 +1,34 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "at@latest": {
+      "last_modified": "2024-08-14T11:41:26Z",
+      "resolved": "github:NixOS/nixpkgs/0cb2fd7c59fed0cd82ef858cbcbdb552b9a33465#at",
+      "source": "devbox-search",
+      "version": "3.2.5",
+      "systems": {
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dzkdgfqrcq8pbb5iskr9n7x8wcmgvb3k-at-3.2.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dzkdgfqrcq8pbb5iskr9n7x8wcmgvb3k-at-3.2.5"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4n9xbsd62hlr8mvhd5yg7a53nl4azfx2-at-3.2.5",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4n9xbsd62hlr8mvhd5yg7a53nl4azfx2-at-3.2.5"
+        }
+      }
+    },
     "black@23.9.1": {
       "last_modified": "2023-11-19T17:46:56Z",
       "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#black",

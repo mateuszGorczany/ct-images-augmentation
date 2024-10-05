@@ -1,0 +1,26 @@
+name: wgan
+
+training:
+  batch_size: 5
+  seed: 42
+  epochs: 3500
+  train_ratio: 0.9
+  num_nodes: 1
+  device: "cuda"
+
+model:
+  learning_rate: 0.0002
+  beta1: 0.5
+  beta2: 0.999
+  nz: 1000
+  p_lambda: 10.0
+  scan_depth: 64
+
+dataset:
+  caching: "memory" # disk or memory caching
+  path: /ravana/d3d_work/micorl/data/ct_images_prostate_32fixed/
+  image_size: 64  # image height and width
+  # image_size: 128  # image height and width
+  num_slices: 64  # image depth
+  win_wid: 400  # window width for converting to HO scale
+  win_lev: 60

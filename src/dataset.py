@@ -21,8 +21,8 @@ CachingType = Literal["memory", "disk"]
 @dataclass
 class DatasetConfig:
     path: str
+    image_size: int  # image height and width
     caching: CachingType = "disk"
-    image_size: int = 256  # image height and width
     num_slices: int = 32  # image depth
     win_wid: int = 400  # window width for converting to HO scale
     win_lev: int = 60  # window level for converting to HO scale
@@ -72,7 +72,12 @@ def load_dataset(ds_config: DatasetConfig) -> CacheDataset | PersistentDataset:
     files = list(Path(ds_config.path).glob("*.nii.gz"))
     match ds_config.caching:
         case "disk":
+            print("Caching to disk")
             cache_dir = Path(ds_config.cache_dir) / Path(ds_config.path).name
+            if cache_dir.exists():
+                import shutil
+
+                shutil.rmtree(cache_dir)
             cache_dir.mkdir(parents=True, exist_ok=True)
             return PersistentDataset(
                 files, train_transforms(ds_config), cache_dir=cache_dir

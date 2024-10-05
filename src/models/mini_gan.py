@@ -1,21 +1,17 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import pytorch_lightning as pl
-import torchvision
 import numpy as np
 
 from pydantic.dataclasses import dataclass
 from src.utils import plot_dicom
-import wandb
 
 
 class Generator(nn.Module):
-        
     def __init__(self, img_shape: tuple, latent_dim: int, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.img_shape = img_shape
-        self.latent_dim = latent_dim # aka z
+        self.latent_dim = latent_dim  # aka z
 
         self.model = nn.Sequential(
             *self._block(self.latent_dim, 128, normalize=False),
@@ -37,6 +33,7 @@ class Generator(nn.Module):
         img = self.model(z)
         img = img.view(img.size(0), *self.img_shape)
         return img
+
     # def __init__(self, nz):
     #     super(Generator, self).__init__()
     #     self.main = nn.Sequential(
@@ -49,6 +46,7 @@ class Generator(nn.Module):
 
     # def forward(self, input):
     #     return self.main(input)
+
 
 class Discriminator(nn.Module):
     def __init__(self, img_shape):
@@ -68,6 +66,7 @@ class Discriminator(nn.Module):
         validity = self.model(img_flat)
 
         return validity
+
 
 # # Define Discriminator
 # class Discriminator(nn.Module):
@@ -107,42 +106,20 @@ class GAN(pl.LightningModule):
         self.validation_z = torch.randn(8, self.config.latent_dim, device=config.device)
         self.example_input_array = torch.zeros(2, self.config.latent_dim)
 
-
     def forward(self, z):
         return self.generator(z)
 
-    def configure_optimizers(self):
-        optimizerD = optim.Adam(
-            self.discriminator.parameters(),
-            lr=self.config.learning_rate,
-            betas=(self.config.beta1, 0.999),
-        )
-        optimizerG = optim.Adam(
-            self.generator.parameters(),
-            lr=self.config.learning_rate,
-            betas=(self.config.beta1, 0.999),
-        )
-        return [optimizerD, optimizerG], []
-
     def adversarial_loss(self, y_hat, y):
         return torch.nn.functional.binary_cross_entropy(y_hat, y)
-    
-    def training_step(self, batch):
-        # print(len(batch))
-        imgs = batch
-        # imgs = imgs['data']
-        # imgs = batch
 
+    def training_step(self, batch):
+        real_imgs = batch
         optimizer_g, optimizer_d = self.optimizers()
 
-        # sample noise
-        z = torch.randn(imgs.shape[0], self.config.latent_dim)
-        z = z.type_as(imgs)
+        batch_len = real_imgs.shape[0]
 
-        # train generator
-        # generate images
-        self.toggle_optimizer(optimizer_g)
-        self.generated_imgs = self(z)
+        # sample noise (latent space)
+        z = torch.randn(batch_len, self.config.latent_dim).type_as(real_imgs)
 
         # log sampled images
         # sample_imgs = self.generated_imgs[:6]
@@ -154,34 +131,34 @@ class GAN(pl.LightningModule):
         # grid = plot_dicom(sample_imgs[0].to("cpu"), title="Generated Images")
         # self.logger.log_image(key="generated_images", images=[grid,], step=self.global_step)
 
-        # ground truth result (ie: all fake)
-        # put on GPU because we created this tensor inside training_loop
-        valid = torch.ones(imgs.size(0), 1)
-        valid = valid.type_as(imgs)
+        # Train generator
 
-        # adversarial loss is binary cross-entropy
-        g_loss = self.adversarial_loss(self.discriminator(self(z)), valid)
+        # generate images
+        self.toggle_optimizer(optimizer_g)
+
+        fake_images = self(z)
+        true_label = torch.ones(batch_len, 1).type_as(real_imgs)
+
+        # g_loss tells how well is the generator fooling the discriminator
+        # The less g_loss the better
+        g_loss = self.adversarial_loss(self.discriminator(fake_images), true_label)
         self.log("g_loss", g_loss, prog_bar=True)
         self.manual_backward(g_loss)
         optimizer_g.step()
         optimizer_g.zero_grad()
         self.untoggle_optimizer(optimizer_g)
 
-        # train discriminator
+        # Train discriminator
         # Measure discriminator's ability to classify real from generated samples
         self.toggle_optimizer(optimizer_d)
 
         # how well can it label as real?
-        valid = torch.ones(imgs.size(0), 1)
-        valid = valid.type_as(imgs)
-
-        real_loss = self.adversarial_loss(self.discriminator(imgs), valid)
+        true_label = torch.ones(batch_len, 1).type_as(real_imgs)
+        real_loss = self.adversarial_loss(self.discriminator(real_imgs), true_label)
 
         # how well can it label as fake?
-        fake = torch.zeros(imgs.size(0), 1)
-        fake = fake.type_as(imgs)
-
-        fake_loss = self.adversarial_loss(self.discriminator(self(z).detach()), fake)
+        fake_label = torch.zeros(batch_len, 1).type_as(real_imgs)
+        fake_loss = self.adversarial_loss(self.discriminator(fake_images), fake_label)
 
         # discriminator loss is the average of these
         d_loss = (real_loss + fake_loss) / 2
@@ -200,6 +177,9 @@ class GAN(pl.LightningModule):
         opt_d = torch.optim.Adam(self.discriminator.parameters(), lr=lr, betas=(b1, b2))
         return [opt_g, opt_d], []
 
+    def validation_step(self, batch):
+        return
+
     def on_validation_epoch_end(self):
         z = self.validation_z.type_as(self.generator.model[0].weight)
 
@@ -209,7 +189,32 @@ class GAN(pl.LightningModule):
         # grid = torchvision.utils.make_grid(sample_imgs)
         grid = plot_dicom(sample_imgs[0], title="Generated Images")
         # self.logger.experiment.add_image("generated_images", grid, self.current_epoch)
-        self.logger.log_image("generated_images", [grid,], self.current_epoch)
+        self.logger.log_image(
+            "generated_images",
+            [
+                grid,
+            ],
+            self.current_epoch,
+        )
+
+    def test_step(self, batch):
+        imgs = batch
+        z = torch.randn(imgs.shape[0], self.config.latent_dim)
+        z = z.type_as(imgs)
+        generated_imgs = self(z)
+        return generated_imgs
+
+    def on_test_epoch_end(self):
+        z = self.validation_z.type_as(self.generator.model[0].weight)
+        sample_imgs = self(z)
+        grid = plot_dicom(sample_imgs[0], title="Generated Test Images")
+        self.logger.log_image(
+            "generated_images",
+            [
+                grid,
+            ],
+            self.current_epoch,
+        )
 
     # def training_step(self, batch, batch_idx):
     #     real_images = batch
@@ -236,7 +241,6 @@ class GAN(pl.LightningModule):
     #     optimizer_d.step()
     #     optimizer_d.zero_grad()
     #     self.untoggle_optimizer(optimizer_d)
-        
 
     #     # real_output = self.discriminator(real_images).view(-1, 1)
     #     # d_loss_real = self.criterion(real_output, real_labels)

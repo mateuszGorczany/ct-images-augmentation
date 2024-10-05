@@ -10,7 +10,8 @@
     "fpp@latest",
     "nvtop@latest",
     "fzf@latest",
-    "dcm2niix@latest"
+    "dcm2niix@latest",
+    "at@latest"
   ],
   "shell": {
     "init_hook": [

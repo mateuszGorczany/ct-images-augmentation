@@ -1,0 +1,64 @@
+name: meta_vqgan
+
+training:
+  batch_size: 1
+  seed: 42
+  epochs: 15000
+  train_ratio: 0.9
+  num_nodes: 1
+  gradient_clip_val: 1.0
+  metric_to_monitor: "val/recon_loss"
+  metric_mode: "min"
+  device: "cuda"
+
+model:
+  # diffusion_model_parameters:
+  #   spatial_dims: 3
+  #   in_channels: 3
+  #   out_channels: 3
+  #   num_res_blocks: 1
+  #   num_channels: [32, 64, 64]
+  #   attention_levels: [False, True, True]
+  #   num_head_channels: [0, 64, 64]
+
+  # scheduler_parameters:
+  #   num_train_steps: 1000
+  #   beta_start: 0.0015
+  #   beta_end: 0.0195
+  #   schedule: "scaled_linear_beta"
+  image_channels: 1
+  embedding_dim: 8
+  n_codes: 16384
+  n_hiddens: 16
+  lr: 5e-6
+  downsample: [2, 2, 2]
+  disc_channels: 64
+  disc_layers: 3
+  discriminator_iter_start: 10000
+  disc_loss_type: hinge
+  image_gan_weight: 1.0
+  video_gan_weight: 1.0
+  l1_weight: 4.0
+  gan_feat_weight: 4.0
+  perceptual_weight: 4.0
+  i3d_feat: False
+  restart_thres: 1.0
+  no_random_restart: False
+  norm_type: group
+  padding_type: replicate
+  num_groups: 32
+  
+  # learning_rate: 0.0002
+  # scale_factor: 1.0049688816070557
+  # img_shape: [1, 128, 128, 32]
+  # beta1: 0.5
+  # beta2: 0.999
+  device: "cuda"
+
+dataset:
+  caching: "disk" # disk or memory caching
+  path: /ravana/d3d_work/micorl/data/ct_images_prostate_32fixed/
+  image_size: 128  # image height and width
+  num_slices: 32  # image depth
+  win_wid: 400  # window width for converting to HO scale
+  win_lev: 60
