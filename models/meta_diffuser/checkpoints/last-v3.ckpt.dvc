@@ -1,0 +1,5 @@
+outs:
+- md5: baf4e1258ba6ed584670cc8a36ab5ce9
+  size: 805024585
+  hash: md5
+  path: last-v3.ckpt

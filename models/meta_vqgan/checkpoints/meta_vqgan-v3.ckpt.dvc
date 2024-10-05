@@ -1,0 +1,5 @@
+outs:
+- md5: 6c8ea77fe4a22661aec1009bfc1c3f9f
+  size: 228418372
+  hash: md5
+  path: meta_vqgan-v3.ckpt

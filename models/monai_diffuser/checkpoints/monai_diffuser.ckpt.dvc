@@ -1,0 +1,5 @@
+outs:
+- md5: ff7d6aefa929d744f21330173076d0b0
+  size: 35289274
+  hash: md5
+  path: monai_diffuser.ckpt

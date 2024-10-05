@@ -1,0 +1,5 @@
+outs:
+- md5: 9fd978cc9fa4d9176ea088111395d813
+  size: 41670478
+  hash: md5
+  path: monai_autoencoder-v1.ckpt

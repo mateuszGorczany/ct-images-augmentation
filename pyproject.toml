@@ -44,6 +44,7 @@ dev-dependencies = [
     "pylyzer>=0.0.61",
     "pyrasite>=2.0",
     "pyright>=1.1.379",
+    "dvc[gdrive]>=3.55.2",
 ]
 
 [tool.hatch.metadata]

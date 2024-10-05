@@ -1,0 +1,5 @@
+outs:
+- md5: 18f7d4c7804d2bc444c60718789dd645
+  size: 805024457
+  hash: md5
+  path: meta_diffuser-v5.ckpt
